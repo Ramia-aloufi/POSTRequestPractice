@@ -4,22 +4,24 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
-import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
+import com.example.recipeapp.APIClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    lateinit var tvname:TextView
-    lateinit var tvloc:TextView
+    lateinit var tvid:EditText
+    lateinit var tvname:EditText
+    lateinit var tvloc:EditText
     lateinit var btn:Button
     lateinit var vi:Button
     lateinit var call: Call<Users.UserData>
     var name = "ram"
     var loc = "KSA"
+    var id = 0
     lateinit var nn:Users.UserData
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +29,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         init()
         btn.setOnClickListener {
+             id =  tvid.text.toString().toInt()
              name =  tvname.text.toString()
              loc = tvloc.text.toString()
-            nn = Users.UserData(name,loc)
+            nn = Users.UserData(id,name,loc)
             callfun()
         }
         vi.setOnClickListener {
@@ -41,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun init(){
+        tvid = findViewById(R.id.tvid)
         tvname = findViewById(R.id.tvname)
         tvloc = findViewById(R.id.tvloc)
         btn = findViewById(R.id.btn)
@@ -53,9 +57,8 @@ class MainActivity : AppCompatActivity() {
 
 
         val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
-        call= apiInterface!!.added(nn)
 
-        call?.enqueue(object : Callback<Users.UserData?> {
+        apiInterface!!.added(nn).enqueue(object : Callback<Users.UserData?> {
             override fun onResponse( call: Call<Users.UserData?>,response: Response<Users.UserData?>) {
                 Log.d("TAG", response.code().toString() + "")
                 Toast.makeText(this@MainActivity,"added",Toast.LENGTH_SHORT).show()
@@ -69,5 +72,7 @@ class MainActivity : AppCompatActivity() {
 
 
         })
+
+
     }
 }

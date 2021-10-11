@@ -7,15 +7,7 @@ class Users {
 
     var data: List<UserData>? = null
 
-    class UserData {
+    class UserData(var pk: Int?, var name: String?, var location: String?) {
 
-        var name: String? = null
-
-        var location: String? = null
-
-        constructor(name: String?, location: String?) {
-            this.name = name
-            this.location = location
-        }
     }
 }

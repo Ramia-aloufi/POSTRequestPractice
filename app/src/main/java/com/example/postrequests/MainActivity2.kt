@@ -4,19 +4,22 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.recipeapp.APIClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity2 : AppCompatActivity() {
     lateinit var btn1: Button
+    lateinit var btn2: Button
     lateinit var tv1: TextView
+    lateinit var rv: RecyclerView
     lateinit var call: Call<List<Users.UserData>>
+    lateinit var alL:ArrayList<Users.UserData>
      var txt = ""
 
 
@@ -31,11 +34,22 @@ class MainActivity2 : AppCompatActivity() {
             startActivity(intent)
         }
 
+        btn2.setOnClickListener {
+            var intent = Intent(this, MainActivity3::class.java)
+            startActivity(intent)
+        }
+
+        rv.adapter = MyAdapter(alL)
+        rv.layoutManager = LinearLayoutManager(this)
+
+
     }
 
     fun init() {
         btn1 = findViewById(R.id.btn1)
-        tv1 = findViewById(R.id.tv1)
+        btn2 = findViewById(R.id.button2)
+        rv  = findViewById(R.id.rv)
+        alL = arrayListOf()
     }
 
     fun getUser() {
@@ -51,12 +65,13 @@ class MainActivity2 : AppCompatActivity() {
                 progressDialog.dismiss()
                 val resource = response.body()
                 for(user in resource!!){
-                    val nameList = user.name
-                    val locList = user.location
-                    txt += "$nameList \n $locList\n\n"
-                    tv1.text= txt
+                    var users = Users.UserData(user.pk,user.name,user.location)
+
+                    alL.add(user)
 
                 }
+                rv.adapter?.notifyDataSetChanged()
+
        }
 
             override fun onFailure(call: Call<List<Users.UserData>>, t: Throwable) {
